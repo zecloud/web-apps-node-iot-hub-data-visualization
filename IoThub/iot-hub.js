@@ -1,47 +1,54 @@
-/*
- * IoT Gateway BLE Script - Microsoft Sample Code - Copyright (c) 2016 - Licensed MIT
- */
-'use strict';
+//
+// IoT Gateway BLE Script - Microsoft Sample Code - Copyright (c) 2016 - Licensed MIT
+//
 
-var { EventHubClient, EventPosition } = require('azure-event-hubs');
+const { EventHubClient, EventPosition } = require('azure-event-hubs');
 
-// Close connection to IoT Hub.
-IoTHubReaderClient.prototype.stopReadMessage = function() {
-  this.iotHubClient.close();
-}
+class IoTHubReaderClient {
+    constructor(connectionString, consumerGroupName) {
+        this.connectionString = connectionString;
+        this.consumerGroupName = consumerGroupName;
+        this.iotHubClient = undefined;
+    }
 
-// Read device-to-cloud messages from IoT Hub.
-IoTHubReaderClient.prototype.startReadMessage = function(cb) {
-  var self = this;
-  var printError = function(err) {
-    console.error(err.message || err);
-  };
-  var deviceId = process.env['Azure.IoT.IoTHub.DeviceId'];
+    async startReadMessage(startReadMessageCallback) {
+        const deviceId = process.env['DeviceId'];
 
-  EventHubClient.createFromIotHubConnectionString(this.connectionString).then((client) => {
-    console.log("Successully created the EventHub Client from iothub connection string.");
-    self.iotHubClient = client;
-    return self.iotHubClient.getPartitionIds();
-  }).then((ids) => {
-    console.log("The partition ids are: ", ids);
-    var onMessageHandler = (message) => {
-      var from = message.annotations['iothub-connection-device-id'];
-      if (deviceId && deviceId !== from) {
-        return;
-      }
-      cb(message.body, Date.parse(message.enqueuedTimeUtc));
-    };
-    return ids.map(function (id) {
-      return self.iotHubClient.receive(id, onMessageHandler, printError, { eventPosition: EventPosition.fromEnqueuedTime(Date.now()) });
-    });
-  }).catch(printError);
+        try {
+            const client = await EventHubClient.createFromIotHubConnectionString(this.connectionString);
+            this.iotHubClient = client;
 
-}
+            const ids = await this.iotHubClient.getPartitionIds();
 
-function IoTHubReaderClient(connectionString, consumerGroupName) {
-  this.connectionString = connectionString;
-  this.consumerGroupName = consumerGroupName;
-  this.iotHubClient = undefined;
+            console.log("The partition ids are: ", ids);
+
+            const onError = (err) => {
+                console.error(err.message || err);
+            };
+
+            const onMessage = (message) => {
+                const from = message.annotations['iothub-connection-device-id'];
+                if (deviceId && deviceId !== from) {
+                    return;
+                }
+
+                return startReadMessageCallback(message.body, Date.parse(message.enqueuedTimeUtc));
+            };
+
+            return ids.map((id) => {
+                return this.iotHubClient.receive(id, onMessage, onError, {
+                    eventPosition: EventPosition.fromEnqueuedTime(Date.now())
+                });
+            });
+        }
+        catch (ex) {
+            console.error(error.message || error)
+        }
+    }
+
+    async stopReadMessage() {
+        await this.iotHubClient.close();
+    }
 }
 
 module.exports = IoTHubReaderClient;

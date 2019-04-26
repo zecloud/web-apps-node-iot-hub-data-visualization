@@ -1,0 +1,25 @@
+{
+    // Use IntelliSense to learn about possible Node.js debug attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Program",
+            "console": "integratedTerminal",
+            "program": "${workspaceFolder}/server.js",
+            "protocol": "inspector",
+            "smartStep": true,
+            "showAsyncStacks": true,
+            "sourceMaps": true,
+            "env": {
+                "NODE_ENV": "local",
+                "IotHubConnectionString": "HostName=iotc-iothub-visionai.azure-devices.net;SharedAccessKeyName=service;SharedAccessKey=H+bNHbesqVGZnDuAHEu9zXGmIeUaDHkzzIVCPSp64KY=",
+                "EventHubConsumerGroup": "webapp-test",
+                "DeviceId": "webapp-device"
+            }
+        }
+    ]
+}

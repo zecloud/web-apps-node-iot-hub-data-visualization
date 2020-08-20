@@ -23,8 +23,8 @@ $(document).ready(() => {
       this.timeData.push(time);
       this.temperatureData.push(temperature);
       this.humidityData.push(humidity || null);
-      this.tvOCData.push(temperature|| null);
-      this.CO2Data.push(humidity || null);
+      this.tvOCData.push(tvOC|| null);
+      this.CO2Data.push(CO2 || null);
 
       if (this.timeData.length > this.maxLen) {
         this.timeData.shift();

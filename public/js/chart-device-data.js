@@ -169,8 +169,9 @@ $(document).ready(() => {
       data: chartData,
       options: chartOptions,
     });
+  const ctxgaz = document.getElementById('iotChart').getContext('2d');
   const myLineGazChart = new Chart(
-    ctx,
+    ctxgaz,
     {
       type: 'line',
       data: chartGazData,

@@ -188,6 +188,7 @@ $(document).ready(() => {
     chartData.labels = device.timeData;
     chartData.datasets[0].data = device.temperatureData;
     chartData.datasets[1].data = device.humidityData;
+    chartGazData.labels = device.timeData;
     chartGazData.datasets[0].data = device.tvOCData;
     chartGazData.datasets[1].data = device.CO2Data;
     myLineChart.update();

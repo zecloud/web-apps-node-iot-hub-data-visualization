@@ -10,10 +10,11 @@ $(document).ready(() => {
   class DeviceData {
     constructor(deviceId) {
       this.deviceId = deviceId;
-      this.maxLen = 50;
+      this.maxLen = 500;
       this.timeData = new Array(this.maxLen);
       this.temperatureData = new Array(this.maxLen);
       this.humidityData = new Array(this.maxLen);
+      
     }
 
     addData(time, temperature, humidity) {

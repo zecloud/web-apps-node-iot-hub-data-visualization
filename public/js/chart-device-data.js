@@ -16,22 +16,31 @@ $(document).ready(() => {
       this.humidityData = new Array(this.maxLen);
       this.tvOCData =new Array(this.maxLen);
       this.CO2Data =new Array(this.maxLen);
+      this.VisibleLData  =new Array(this.maxLen);
+      this.UVData =new Array(this.maxLen);
+      this.IRData =new Array(this.maxLen);
       
     }
 
-    addData(time, temperature, humidity,tvOC,CO2) {
+    addData(time, temperature, humidity,tvOC,CO2,VisibleL,UV,IR) {
       this.timeData.push(time);
       this.temperatureData.push(temperature);
       this.humidityData.push(humidity || null);
       this.tvOCData.push(tvOC|| null);
       this.CO2Data.push(CO2 || null);
-
+      this.VisibleLData.push(VisibleL || null);
+      this.UVData.push(UV|| null);
+      this.IRData.push(IR || null);
+      
       if (this.timeData.length > this.maxLen) {
         this.timeData.shift();
         this.temperatureData.shift();
         this.humidityData.shift();
         this.tvOCData.shift();
         this.CO2Data.shift();
+        this.VisibleLData.shift();
+        this.UVData.shift();
+        this.IRData.shift();
       }
     }
   }
@@ -113,7 +122,43 @@ $(document).ready(() => {
       }
     ]
   };
-
+  const chartLightData = {
+    datasets: [
+      {
+        fill: false,
+        label: 'Visible Light',
+        yAxisID: 'VisibleL',
+        borderColor: 'rgba(255, 204, 0, 1)',
+        pointBoarderColor: 'rgba(255, 204, 0, 1)',
+        backgroundColor: 'rgba(255, 204, 0, 0.4)',
+        pointHoverBackgroundColor: 'rgba(255, 204, 0, 1)',
+        pointHoverBorderColor: 'rgba(255, 204, 0, 1)',
+        spanGaps: true,
+      },
+       {
+        fill: false,
+        label: 'IR',
+        yAxisID: 'IR',
+        borderColor: 'rgba(255, 0, 0, 1)',
+        pointBoarderColor: 'rgba(255, 0, 0, 1)',
+        backgroundColor: 'rgba(255, 0, 0, 0.4)',
+        pointHoverBackgroundColor: 'rgba(255, 0, 0, 1)',
+        pointHoverBorderColor: 'rgba(255, 0, 0, 1)',
+        spanGaps: true,
+      },
+      {
+        fill: false,
+        label: 'UV',
+        yAxisID: 'CO2',
+        borderColor: 'rgba(24, 120, 240, 1)',
+        pointBoarderColor: 'rgba(24, 120, 240, 1)',
+        backgroundColor: 'rgba(24, 120, 240, 0.4)',
+        pointHoverBackgroundColor: 'rgba(24, 120, 240, 1)',
+        pointHoverBorderColor: 'rgba(24, 120, 240, 1)',
+        spanGaps: true,
+      }
+    ]
+  };
   const chartOptions = {
     scales: {
       yAxes: [{
@@ -159,7 +204,37 @@ $(document).ready(() => {
       }]
     }
   };
-  
+  const chartLightOptions = {
+    scales: {
+      yAxes: [{
+        id: 'VisibleL',
+        type: 'linear',
+        scaleLabel: {
+          labelString: 'Visible Light ()',
+          display: true,
+        },
+        position: 'left',
+      },
+        {
+        id: 'IR',
+        type: 'linear',
+        scaleLabel: {
+          labelString: 'IR ()',
+          display: true,
+        },
+        position: 'left',
+      },      
+      {
+        id: 'UV',
+        type: 'linear',
+        scaleLabel: {
+          labelString: 'UV ()',
+          display: true,
+        },
+        position: 'right',
+      }]
+    }
+  };
   // Get the context of the canvas element we want to select
   const ctx = document.getElementById('iotChart').getContext('2d');
   const myLineChart = new Chart(
@@ -177,7 +252,14 @@ $(document).ready(() => {
       data: chartGazData,
       options: chartGazOptions,
     });
-
+  const ctxLight = document.getElementById('iotLightChart').getContext('2d');
+  const myLineLightChart = new Chart(
+    ctxgaz,
+    {
+      type: 'line',
+      data: chartLightData,
+      options: chartLightOptions,
+    });
   // Manage a list of devices in the UI, and update which device data the chart is showing
   // based on selection
   let needsAutoSelect = true;
@@ -191,7 +273,12 @@ $(document).ready(() => {
     chartGazData.labels = device.timeData;
     chartGazData.datasets[0].data = device.tvOCData;
     chartGazData.datasets[1].data = device.CO2Data;
+    chartLightData.labels = device.timeData;
+    chartLightData.datasets[0].data = device.VisibleLData;
+    chartLightData.datasets[1].data = device.IRData;
+    chartLightData.datasets[2].data = device.UVData;
     myLineChart.update();
+    myLineLightChart.update();
     myLineGazChart.update();
   }
   listOfDevices.addEventListener('change', OnSelectionChange, false);
@@ -216,13 +303,13 @@ $(document).ready(() => {
       const existingDeviceData = trackedDevices.findDevice(messageData.DeviceId);
 
       if (existingDeviceData) {
-        existingDeviceData.addData(messageData.MessageDate, messageData.IotData.temperature, messageData.IotData.humidity,messageData.IotData.tVOC,messageData.IotData.CO2);
+        existingDeviceData.addData(messageData.MessageDate, messageData.IotData.temperature, messageData.IotData.humidity,messageData.IotData.tVOC,messageData.IotData.CO2,messageData.IotData.Visible,messageData.IotData.IR,messageData.IotData.UV);
       } else {
         const newDeviceData = new DeviceData(messageData.DeviceId);
         trackedDevices.devices.push(newDeviceData);
         const numDevices = trackedDevices.getDevicesCount();
         deviceCount.innerText = numDevices === 1 ? `${numDevices} device` : `${numDevices} devices`;
-        newDeviceData.addData(messageData.MessageDate, messageData.IotData.temperature, messageData.IotData.humidity,messageData.IotData.tVOC,messageData.IotData.CO2);
+        newDeviceData.addData(messageData.MessageDate, messageData.IotData.temperature, messageData.IotData.humidity,messageData.IotData.tVOC,messageData.IotData.CO2,messageData.IotData.Visible,messageData.IotData.IR,messageData.IotData.UV);
 
         // add device to the UI list
         const node = document.createElement('option');
@@ -239,6 +326,7 @@ $(document).ready(() => {
       }
 
       myLineChart.update();
+      myLineLightChart.update();
       myLineGazChart.update();
     } catch (err) {
       console.error(err);

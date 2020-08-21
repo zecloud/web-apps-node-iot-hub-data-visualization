@@ -19,10 +19,11 @@ $(document).ready(() => {
       this.VisibleLData  =new Array(this.maxLen);
       this.UVData =new Array(this.maxLen);
       this.IRData =new Array(this.maxLen);
+      this.TDSData =new Array(this.maxLen);
       
     }
 
-    addData(time, temperature, humidity,tvOC,CO2,VisibleL,IR,UV) {
+    addData(time, temperature, humidity,tvOC,CO2,VisibleL,IR,UV,TDS) {
       this.timeData.push(time);
       this.temperatureData.push(temperature);
       this.humidityData.push(humidity || null);
@@ -31,6 +32,7 @@ $(document).ready(() => {
       this.VisibleLData.push(VisibleL || null);
       this.UVData.push(UV|| null);
       this.IRData.push(IR || null);
+      this.TDSData.push(TDS || null);
       
       if (this.timeData.length > this.maxLen) {
         this.timeData.shift();
@@ -41,6 +43,7 @@ $(document).ready(() => {
         this.VisibleLData.shift();
         this.UVData.shift();
         this.IRData.shift();
+        this.TDSData.shift();
       }
     }
   }
@@ -118,6 +121,21 @@ $(document).ready(() => {
         backgroundColor: 'rgba(24, 120, 240, 0.4)',
         pointHoverBackgroundColor: 'rgba(24, 120, 240, 1)',
         pointHoverBorderColor: 'rgba(24, 120, 240, 1)',
+        spanGaps: true,
+      }
+    ]
+  };
+    const chartWaterData = {
+    datasets: [
+      {
+        fill: false,
+        label: 'TDS',
+        yAxisID: 'TDS',
+        borderColor: 'rgba(255, 204, 0, 1)',
+        pointBoarderColor: 'rgba(255, 204, 0, 1)',
+        backgroundColor: 'rgba(255, 204, 0, 0.4)',
+        pointHoverBackgroundColor: 'rgba(255, 204, 0, 1)',
+        pointHoverBorderColor: 'rgba(255, 204, 0, 1)',
         spanGaps: true,
       }
     ]
@@ -204,6 +222,19 @@ $(document).ready(() => {
       }]
     }
   };
+   const chartWaterOptions = {
+    scales: {
+      yAxes: [{
+        id: 'TDS',
+        type: 'linear',
+        scaleLabel: {
+          labelString: 'TDS (ppm)',
+          display: true,
+        },
+        position: 'left',
+      }]
+    }
+  };
   const chartLightOptions = {
     scales: {
       yAxes: [{
@@ -260,6 +291,14 @@ $(document).ready(() => {
       data: chartLightData,
       options: chartLightOptions,
     });
+   const ctxWater = document.getElementById('iotWaterChart').getContext('2d');
+  const myLineWaterChart = new Chart(
+    ctxWater,
+    {
+      type: 'line',
+      data: chartWaterData,
+      options: chartWaterOptions,
+    });
   // Manage a list of devices in the UI, and update which device data the chart is showing
   // based on selection
   let needsAutoSelect = true;
@@ -277,9 +316,13 @@ $(document).ready(() => {
     chartLightData.datasets[0].data = device.VisibleLData;
     chartLightData.datasets[1].data = device.IRData;
     chartLightData.datasets[2].data = device.UVData;
+    chartWaterData.labels = device.timeData;
+    chartWaterData.datasets[0].data = device.TDSData;
     myLineChart.update();
     myLineLightChart.update();
     myLineGazChart.update();
+    myLineWaterChart.update();
+    
   }
   listOfDevices.addEventListener('change', OnSelectionChange, false);
 
@@ -303,13 +346,13 @@ $(document).ready(() => {
       const existingDeviceData = trackedDevices.findDevice(messageData.DeviceId);
 
       if (existingDeviceData) {
-        existingDeviceData.addData(messageData.MessageDate, messageData.IotData.temperature, messageData.IotData.humidity,messageData.IotData.tVOC,messageData.IotData.CO2,messageData.IotData.Visible,messageData.IotData.IR,messageData.IotData.UV);
+        existingDeviceData.addData(messageData.MessageDate, messageData.IotData.temperature, messageData.IotData.humidity,messageData.IotData.tVOC,messageData.IotData.CO2,messageData.IotData.Visible,messageData.IotData.IR,messageData.IotData.UV,messageData.IotData.TDS);
       } else {
         const newDeviceData = new DeviceData(messageData.DeviceId);
         trackedDevices.devices.push(newDeviceData);
         const numDevices = trackedDevices.getDevicesCount();
         deviceCount.innerText = numDevices === 1 ? `${numDevices} device` : `${numDevices} devices`;
-        newDeviceData.addData(messageData.MessageDate, messageData.IotData.temperature, messageData.IotData.humidity,messageData.IotData.tVOC,messageData.IotData.CO2,messageData.IotData.Visible,messageData.IotData.IR,messageData.IotData.UV);
+        newDeviceData.addData(messageData.MessageDate, messageData.IotData.temperature, messageData.IotData.humidity,messageData.IotData.tVOC,messageData.IotData.CO2,messageData.IotData.Visible,messageData.IotData.IR,messageData.IotData.UV,messageData.IotData.TDS);
 
         // add device to the UI list
         const node = document.createElement('option');
@@ -328,6 +371,7 @@ $(document).ready(() => {
       myLineChart.update();
       myLineLightChart.update();
       myLineGazChart.update();
+      myLineWaterChart.update();
     } catch (err) {
       console.error(err);
     }

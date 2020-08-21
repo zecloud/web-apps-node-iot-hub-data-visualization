@@ -254,7 +254,7 @@ $(document).ready(() => {
     });
   const ctxLight = document.getElementById('iotLightChart').getContext('2d');
   const myLineLightChart = new Chart(
-    ctxgaz,
+    ctxLight,
     {
       type: 'line',
       data: chartLightData,

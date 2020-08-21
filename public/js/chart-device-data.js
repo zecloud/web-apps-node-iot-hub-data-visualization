@@ -22,7 +22,7 @@ $(document).ready(() => {
       
     }
 
-    addData(time, temperature, humidity,tvOC,CO2,VisibleL,UV,IR) {
+    addData(time, temperature, humidity,tvOC,CO2,VisibleL,IR,UV) {
       this.timeData.push(time);
       this.temperatureData.push(temperature);
       this.humidityData.push(humidity || null);

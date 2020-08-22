@@ -372,7 +372,10 @@ $(document).ready(() => {
           OnSelectionChange();
         }
       }
-      image.src="https://hydrocloud.blob.core.windows.net/webcam/picture.jpg"
+      if(messageData.IotData.PHOTO===0)
+      {
+        image.src="https://hydrocloud.blob.core.windows.net/webcam/picture.jpg"
+      }
       myLineChart.update();
       myLineLightChart.update();
       myLineGazChart.update();

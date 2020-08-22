@@ -375,7 +375,7 @@ $(document).ready(() => {
       }
       if(messageData.IotData.PHOTO===1)
       {
-        image.src="https://hydrocloud.blob.core.windows.net/webcam/picture.jpg"
+        image.src="https://hydrocloud.blob.core.windows.net/webcam/picture.jpg?t=" + new Date().getTime();
       }
       myLineChart.update();
       myLineLightChart.update();

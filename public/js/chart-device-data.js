@@ -271,6 +271,7 @@ $(document).ready(() => {
   {
    document.getElementById("photo").src = image.src;
   }
+  image.src="https://hydrocloud.blob.core.windows.net/webcam/picture.jpg"
   // Get the context of the canvas element we want to select
   const ctx = document.getElementById('iotChart').getContext('2d');
   const myLineChart = new Chart(
@@ -372,7 +373,7 @@ $(document).ready(() => {
           OnSelectionChange();
         }
       }
-      if(messageData.IotData.PHOTO===0)
+      if(messageData.IotData.PHOTO===1)
       {
         image.src="https://hydrocloud.blob.core.windows.net/webcam/picture.jpg"
       }

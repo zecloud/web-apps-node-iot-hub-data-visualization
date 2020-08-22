@@ -266,6 +266,11 @@ $(document).ready(() => {
       }]
     }
   };
+  const  image = new Image();
+  image.onload = function()
+  {
+   document.getElementById("photo").src = image.src;
+  }
   // Get the context of the canvas element we want to select
   const ctx = document.getElementById('iotChart').getContext('2d');
   const myLineChart = new Chart(
@@ -344,7 +349,7 @@ $(document).ready(() => {
 
       // find or add device to list of tracked devices
       const existingDeviceData = trackedDevices.findDevice(messageData.DeviceId);
-
+      
       if (existingDeviceData) {
         existingDeviceData.addData(messageData.MessageDate, messageData.IotData.temperature, messageData.IotData.humidity,messageData.IotData.tVOC,messageData.IotData.CO2,messageData.IotData.Visible,messageData.IotData.IR,messageData.IotData.UV,messageData.IotData.TDS);
       } else {
@@ -353,7 +358,7 @@ $(document).ready(() => {
         const numDevices = trackedDevices.getDevicesCount();
         deviceCount.innerText = numDevices === 1 ? `${numDevices} device` : `${numDevices} devices`;
         newDeviceData.addData(messageData.MessageDate, messageData.IotData.temperature, messageData.IotData.humidity,messageData.IotData.tVOC,messageData.IotData.CO2,messageData.IotData.Visible,messageData.IotData.IR,messageData.IotData.UV,messageData.IotData.TDS);
-
+        
         // add device to the UI list
         const node = document.createElement('option');
         const nodeText = document.createTextNode(messageData.DeviceId);
@@ -367,7 +372,7 @@ $(document).ready(() => {
           OnSelectionChange();
         }
       }
-
+      image.src=messageData.IotData.PHOTO
       myLineChart.update();
       myLineLightChart.update();
       myLineGazChart.update();

@@ -400,14 +400,14 @@ $(document).ready(() => {
       
       if (existingDeviceData) {
         existingDeviceData.addData(messageData.MessageDate, messageData.IotData.temperature, messageData.IotData.humidity,messageData.IotData.tVOC,messageData.IotData.CO2,
-                                   messageData.IotData.Visible,messageData.IotData.IR,messageData.IotData.UV,messageData.IotData.TDS,messageData.IotData.WaterLevel,messageData.IotData.WaterTemp);
+                                   messageData.IotData.Visible,messageData.IotData.IR,messageData.IotData.UV,messageData.IotData.TDS,messageData.IotData.WaterLevel);
       } else {
         const newDeviceData = new DeviceData(messageData.DeviceId);
         trackedDevices.devices.push(newDeviceData);
         const numDevices = trackedDevices.getDevicesCount();
         deviceCount.innerText = numDevices === 1 ? `${numDevices} device` : `${numDevices} devices`;
         newDeviceData.addData(messageData.MessageDate, messageData.IotData.temperature, messageData.IotData.humidity,messageData.IotData.tVOC,messageData.IotData.CO2,
-                              messageData.IotData.Visible,messageData.IotData.IR,messageData.IotData.UV,messageData.IotData.TDS,messageData.IotData.WaterLevel,messageData.IotData.WaterTemp);
+                              messageData.IotData.Visible,messageData.IotData.IR,messageData.IotData.UV,messageData.IotData.TDS,messageData.IotData.WaterLevel);
         
         // add device to the UI list
         const node = document.createElement('option');

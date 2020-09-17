@@ -21,9 +21,10 @@ $(document).ready(() => {
       this.IRData =new Array(this.maxLen);
       this.TDSData =new Array(this.maxLen);
       this.WATERLData =new Array(this.maxLen);
+      this.WATERTempData =new Array(this.maxLen);
     }
 
-    addData(time, temperature, humidity,tvOC,CO2,VisibleL,IR,UV,TDS,WATERL) {
+    addData(time, temperature, humidity,tvOC,CO2,VisibleL,IR,UV,TDS,WATERL,WATERTemp) {
       this.timeData.push(time);
       this.temperatureData.push(temperature);
       this.humidityData.push(humidity || null);
@@ -34,6 +35,7 @@ $(document).ready(() => {
       this.IRData.push(IR || null);
       this.TDSData.push(TDS || null);
       this.WATERLData.push(WATERL || null);
+      this.WATERTEMPData.push(WATERTemp || null);
       
       if (this.timeData.length > this.maxLen) {
         this.timeData.shift();
@@ -46,6 +48,7 @@ $(document).ready(() => {
         this.IRData.shift();
         this.TDSData.shift();
         this.WATERLData.shift();
+        this.WATERTEMPData.shift();
       }
     }
   }
@@ -133,6 +136,17 @@ $(document).ready(() => {
         fill: false,
         label: 'TDS',
         yAxisID: 'TDS',
+        borderColor: 'rgba(255, 204, 0, 1)',
+        pointBoarderColor: 'rgba(255, 204, 0, 1)',
+        backgroundColor: 'rgba(255, 204, 0, 0.4)',
+        pointHoverBackgroundColor: 'rgba(255, 204, 0, 1)',
+        pointHoverBorderColor: 'rgba(255, 204, 0, 1)',
+        spanGaps: true,
+      },
+      {
+        fill: false,
+        label: 'WaterTemp',
+        yAxisID: 'WATERTEMP',
         borderColor: 'rgba(255, 204, 0, 1)',
         pointBoarderColor: 'rgba(255, 204, 0, 1)',
         backgroundColor: 'rgba(255, 204, 0, 0.4)',
@@ -247,6 +261,15 @@ $(document).ready(() => {
         position: 'left',
       },
       {
+        id: 'WATERTEMP',
+        type: 'linear',
+        scaleLabel: {
+          labelString: 'Water Temperature (°C)',
+          display: true,
+        },
+        position: 'left',
+      },
+      {
         id: 'WATERL',
         type: 'linear',
         scaleLabel: {
@@ -347,6 +370,7 @@ $(document).ready(() => {
     chartWaterData.labels = device.timeData;
     chartWaterData.datasets[0].data = device.TDSData;
     chartWaterData.datasets[1].data = device.WATERLData;
+    chartWaterData.datasets[2].data = device.WATERTEMPData;
     myLineChart.update();
     myLineLightChart.update();
     myLineGazChart.update();
@@ -376,14 +400,14 @@ $(document).ready(() => {
       
       if (existingDeviceData) {
         existingDeviceData.addData(messageData.MessageDate, messageData.IotData.temperature, messageData.IotData.humidity,messageData.IotData.tVOC,messageData.IotData.CO2,
-                                   messageData.IotData.Visible,messageData.IotData.IR,messageData.IotData.UV,messageData.IotData.TDS,messageData.IotData.WaterLevel);
+                                   messageData.IotData.Visible,messageData.IotData.IR,messageData.IotData.UV,messageData.IotData.TDS,messageData.IotData.WaterLevel,messageData.IotData.WaterTemp);
       } else {
         const newDeviceData = new DeviceData(messageData.DeviceId);
         trackedDevices.devices.push(newDeviceData);
         const numDevices = trackedDevices.getDevicesCount();
         deviceCount.innerText = numDevices === 1 ? `${numDevices} device` : `${numDevices} devices`;
         newDeviceData.addData(messageData.MessageDate, messageData.IotData.temperature, messageData.IotData.humidity,messageData.IotData.tVOC,messageData.IotData.CO2,
-                              messageData.IotData.Visible,messageData.IotData.IR,messageData.IotData.UV,messageData.IotData.TDS,messageData.IotData.WaterLevel);
+                              messageData.IotData.Visible,messageData.IotData.IR,messageData.IotData.UV,messageData.IotData.TDS,messageData.IotData.WaterLevel,messageData.IotData.WaterTemp);
         
         // add device to the UI list
         const node = document.createElement('option');

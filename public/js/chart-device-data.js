@@ -21,7 +21,7 @@ $(document).ready(() => {
       this.IRData =new Array(this.maxLen);
       this.TDSData =new Array(this.maxLen);
       this.WATERLData =new Array(this.maxLen);
-      this.WATERTempData =new Array(this.maxLen);
+      this.WATERTEMPData =new Array(this.maxLen);
     }
 
     addData(time, temperature, humidity,tvOC,CO2,VisibleL,IR,UV,TDS,WATERL,WATERTemp) {
@@ -369,8 +369,8 @@ $(document).ready(() => {
     chartLightData.datasets[2].data = device.UVData;
     chartWaterData.labels = device.timeData;
     chartWaterData.datasets[0].data = device.TDSData;
-    chartWaterData.datasets[1].data = device.WATERLData;
-    chartWaterData.datasets[2].data = device.WATERTEMPData;
+    chartWaterData.datasets[2].data = device.WATERLData;
+    chartWaterData.datasets[1].data = device.WATERTEMPData;
     myLineChart.update();
     myLineLightChart.update();
     myLineGazChart.update();
@@ -400,14 +400,14 @@ $(document).ready(() => {
       
       if (existingDeviceData) {
         existingDeviceData.addData(messageData.MessageDate, messageData.IotData.temperature, messageData.IotData.humidity,messageData.IotData.tVOC,messageData.IotData.CO2,
-                                   messageData.IotData.Visible,messageData.IotData.IR,messageData.IotData.UV,messageData.IotData.TDS,messageData.IotData.WaterLevel);
+                                   messageData.IotData.Visible,messageData.IotData.IR,messageData.IotData.UV,messageData.IotData.TDS,messageData.IotData.WaterLevel,messageData.IotData.WaterTemp);
       } else {
         const newDeviceData = new DeviceData(messageData.DeviceId);
         trackedDevices.devices.push(newDeviceData);
         const numDevices = trackedDevices.getDevicesCount();
         deviceCount.innerText = numDevices === 1 ? `${numDevices} device` : `${numDevices} devices`;
         newDeviceData.addData(messageData.MessageDate, messageData.IotData.temperature, messageData.IotData.humidity,messageData.IotData.tVOC,messageData.IotData.CO2,
-                              messageData.IotData.Visible,messageData.IotData.IR,messageData.IotData.UV,messageData.IotData.TDS,messageData.IotData.WaterLevel);
+                              messageData.IotData.Visible,messageData.IotData.IR,messageData.IotData.UV,messageData.IotData.TDS,messageData.IotData.WaterLevel,messageData.IotData.WaterTemp);
         
         // add device to the UI list
         const node = document.createElement('option');
